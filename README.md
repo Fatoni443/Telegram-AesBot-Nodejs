@@ -26,3 +26,6 @@ Bot Telegram untuk enkripsi dan dekripsi pesan menggunakan AES.
    ```bash
    npm run asyraf
    
+List Command:
+ `/encrypt (TEXT_YANG_INGIN_DI_ENCRYPT)`
+ `/decrypt (TEXT_YANG_INGIN_DI_DECRYPT);`
