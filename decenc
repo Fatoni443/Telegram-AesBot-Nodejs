@@ -1,0 +1,88 @@
+const { Telegraf } = require('telegraf');
+const CryptoJS = require('crypto-js');
+const fs = require('fs');
+
+// Fungsi untuk membaca token dan kunci rahasia dari file key.txt
+function readConfig() {
+    try {
+        const data = fs.readFileSync('key.txt', 'utf-8').trim().split('\n');
+        const config = {};
+        data.forEach(line => {
+            const [key, value] = line.split('=');
+            config[key.trim()] = value.trim();
+        });
+        return config;
+    } catch (err) {
+        console.error('Gagal membaca konfigurasi:', err);
+        return null;
+    }
+}
+
+// Ambil token dan kunci rahasia dari file
+const config = readConfig();
+if (!config || !config.TOKEN || !config.SECRET_KEY) {
+    console.error('Token atau kunci rahasia tidak ditemukan, bot tidak akan dijalankan.');
+    process.exit(1);
+}
+
+// Inisialisasi bot dengan token
+const bot = new Telegraf(config.TOKEN);
+
+// Ambil kunci rahasia dari konfigurasi
+const secretKey = config.SECRET_KEY;
+
+// Ganti dengan ID Telegram kamu
+const OWNER_ID = 6938735999; // ID kamu
+
+// Fungsi untuk memeriksa apakah pengguna adalah owner
+function isOwner(ctx) {
+    return ctx.from.id === OWNER_ID;
+}
+
+// Fungsi untuk mengenkripsi teks
+function encrypt(text) {
+    return CryptoJS.AES.encrypt(text, secretKey).toString();
+}
+
+// Fungsi untuk mendekripsi teks
+function decrypt(ciphertext) {
+    const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+    return bytes.toString(CryptoJS.enc.Utf8);
+}
+
+// Mengatur perintah '/encrypt' untuk mengenkripsi pesan
+bot.command('encrypt', (ctx) => {
+    if (!isOwner(ctx)) {
+        return ctx.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
+    }
+    const message = ctx.message.text.split(' ').slice(1).join(' ');
+    if (!message) {
+        return ctx.reply('Silakan kirim teks yang ingin dienkripsi setelah perintah /encrypt.');
+    }
+    const encryptedMessage = encrypt(message);
+    ctx.reply(`Pesan yang dienkripsi: ${encryptedMessage}`);
+});
+
+// Mengatur perintah '/decrypt' untuk mendekripsi pesan
+bot.command('decrypt', (ctx) => {
+    if (!isOwner(ctx)) {
+        return ctx.reply('Anda tidak memiliki izin untuk menggunakan perintah ini.');
+    }
+    const message = ctx.message.text.split(' ').slice(1).join(' ');
+    if (!message) {
+        return ctx.reply('Silakan kirim teks yang ingin didekripsi setelah perintah /decrypt.');
+    }
+    try {
+        const decryptedMessage = decrypt(message);
+        ctx.reply(`Pesan yang didekripsi: ${decryptedMessage}`);
+    } catch (error) {
+        ctx.reply('Terjadi kesalahan saat mendekripsi pesan. Pastikan teks yang dimasukkan benar.');
+    }
+});
+
+// Menjalankan bot
+bot.launch().then(() => {
+    console.log('Bot sudah berjalan...');
+}).catch(err => {
+    console.error('Gagal menjalankan bot:', err);
+});
