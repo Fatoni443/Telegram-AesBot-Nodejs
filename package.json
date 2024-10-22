@@ -1,0 +1,15 @@
+{
+  "name": "Telegram-AesBot-Nodejs",
+  "version": "1.0.0",
+  "description": "Bot Telegram untuk enkripsi dan dekripsi pesan menggunakan AES.",
+  "main": "decenc",
+  "scripts": {
+    "asyraf": "node decenc"
+  },
+  "author": "Asrv",
+  "license": "MIT",
+  "dependencies": {
+    "telegraf": "^4.8.1",
+    "crypto-js": "^4.1.1"
+  }
+}
