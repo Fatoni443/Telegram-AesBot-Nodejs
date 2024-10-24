@@ -15,7 +15,7 @@ Bot Telegram untuk enkripsi dan dekripsi pesan menggunakan AES.
    Pastikan Node.js sudah terpasang. Jalankan perintah berikut untuk menginstal dependensi yang diperlukan:
 
    ```bash
-   git clone https://github.com/ditt12/Telegram-AesBot-Nodejs/
+   git clone https://github.com/Fatoni443/Telegram-AesBot-Nodejs/
    ```
    ```bash
    cd Telegram-AesBot-Nodejs
